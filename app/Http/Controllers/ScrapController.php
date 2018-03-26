@@ -29,31 +29,49 @@ class ScrapController extends Controller
         $client = new Client();
         $crawler = $client->request('GET', $url);
 
-
-        /*$posts = $crawler->filter('.title a')->each(function (Crawler $node) {
-            $title = $node->text()."\n";
-            print $title;
-            //code
-            //endcode
-        });*/
-
-        /*$rank = $crawler->filter('span.rank')->each(function ($node) {
-            print "Pedido:". ' ' .$node->text()."\n";
+        $titles = $crawler->filter('.title > .storylink')->each( function (Crawler $node) {
+            return $node->text();
         });
-        $titles = $crawler->filter('.title > a')->each(function ($node) {
-            print "titulo". ' ' .$node->text()."\n";
+
+        $rankings = $crawler->filter('span.rank')->each(function ($node) {
+            return "Pedido:".' '. $node->text();
         });
-        $score = $crawler->filter('span.score')->each(function ($node) {
-            print "score". ' ' . $node->text()."\n";
-        });*/
+
+
+        $scores = $crawler->filter('td.subtext > span.score')->each(function ($node) {
+            return "score". ' ' . $node->text();
+        });
+
+        //dd($scores);
+
         $comments = $crawler->filter('td.subtext')->each(function ($node) {
-            print "comentarios". ' ' . $node->text()."\n";
+            //delete strings to gen only comments
+            $onlyComment = substr($node->text(), 55);
+            $comment = trim(substr ($onlyComment, 0, strlen($onlyComment) - 22));
+            return "comentarios".' '. $comment;
         });
-        //dd
-        //dd($posts);
 
+        /*$posts = (object) [
+            'titles'   => collect($titles),
+        ];
+        $ranks = (object)[
+            'rankings' => collect($rankings)
+        ];*/
 
-        return view('crawler',compact('comments'));
+        $posts = [];
+        for ($i = 0; $i < count($titles); $i++){
+          $posts[$i] = [
+              //'score'   => $scores[$i],
+              'rank'    =>  $rankings[$i],
+              'title'   =>  $titles[$i],
+              'comments'   => $comments[$i],
+          ];
+          //dd($posts[$i]);
+        }
+
+        dd(collect($posts));
+
+        return view('crawler',compact('posts'));
     }
 
 }
