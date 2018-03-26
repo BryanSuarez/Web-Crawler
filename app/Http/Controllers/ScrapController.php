@@ -30,16 +30,30 @@ class ScrapController extends Controller
         $crawler = $client->request('GET', $url);
 
 
-        $posts = $crawler->filter('.title a')->each(function (Crawler $node) {
+        /*$posts = $crawler->filter('.title a')->each(function (Crawler $node) {
             $title = $node->text()."\n";
             print $title;
             //code
             //endcode
+        });*/
+
+        /*$rank = $crawler->filter('span.rank')->each(function ($node) {
+            print "Pedido:". ' ' .$node->text()."\n";
         });
+        $titles = $crawler->filter('.title > a')->each(function ($node) {
+            print "titulo". ' ' .$node->text()."\n";
+        });
+        $score = $crawler->filter('span.score')->each(function ($node) {
+            print "score". ' ' . $node->text()."\n";
+        });*/
+        $comments = $crawler->filter('td.subtext')->each(function ($node) {
+            print "comentarios". ' ' . $node->text()."\n";
+        });
+        //dd
         //dd($posts);
 
 
-        //return view('crawler',compact('posts'));
+        return view('crawler',compact('comments'));
     }
 
 }
