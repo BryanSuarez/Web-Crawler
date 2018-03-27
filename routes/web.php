@@ -15,4 +15,4 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-Route::get('crawler','ScrapController@index');
+Route::get('crawler','ScrapController@index')->name('crawler');
